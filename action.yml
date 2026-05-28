@@ -1,0 +1,52 @@
+name: 'repo-stats-dashboard'
+description: 'Generate a pretty HTML dashboard of your repo stats (stars, issues, PRs, commits) and upload as a GitHub Pages artifact'
+author: 'SCL339'
+
+inputs:
+  token:
+    description: 'GitHub token with repo access. Defaults to ${{ github.token }}'
+    required: false
+    default: ${{ github.token }}
+  owner:
+    description: 'Repository owner (user or org). Defaults to the current repo owner.'
+    required: false
+    default: ${{ github.repository_owner }}
+  repo:
+    description: 'Repository name. Defaults to the current repo name.'
+    required: false
+    default: ${{ github.event.repository.name }}
+  days:
+    description: 'Number of days of commit history to display'
+    required: false
+    default: '30'
+  title:
+    description: 'Custom title for the dashboard HTML page'
+    required: false
+    default: 'Repository Stats Dashboard'
+  output_dir:
+    description: 'Directory to write the dashboard HTML file'
+    required: false
+    default: 'dashboard'
+
+outputs:
+  dashboard-path:
+    description: 'Path to the generated dashboard HTML file'
+    value: ${{ steps.generate.outputs.dashboard-path }}
+  pages-artifact:
+    description: 'Name of the uploaded Pages artifact'
+    value: 'github-pages'
+
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.token }}
+    - ${{ inputs.owner }}
+    - ${{ inputs.repo }}
+    - ${{ inputs.days }}
+    - ${{ inputs.title }}
+    - ${{ inputs.output_dir }}
+
+branding:
+  icon: 'bar-chart-2'
+  color: 'green'

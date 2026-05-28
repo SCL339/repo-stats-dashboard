@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }} — {{ stats.full_name }}</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0d1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-muted: #8b949e;
+            --accent: #58a6ff;
+            --green: #3fb950;
+            --orange: #d29922;
+            --red: #f85149;
+            --purple: #bc8cff;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 2rem;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        /* Header */
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        header h1 { font-size: 2rem; font-weight: 600; }
+        header h1 a { color: var(--accent); text-decoration: none; }
+        header h1 a:hover { text-decoration: underline; }
+        .subtitle { color: var(--text-muted); margin-top: 0.25rem; font-size: 0.95rem; }
+        .meta-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            padding: 0.25rem 0.75rem; border-radius: 2rem;
+            font-size: 0.8rem; font-weight: 500; border: 1px solid var(--border);
+        }
+        .badge.lang { background: #1f2937; border-color: #374151; }
+        .badge.stars { background: rgba(88,166,255,0.15); border-color: var(--accent); color: var(--accent); }
+        .badge.forks { background: rgba(188,140,255,0.15); border-color: var(--purple); color: var(--purple); }
+        .badge.issues { background: rgba(210,153,34,0.15); border-color: var(--orange); color: var(--orange); }
+        .badge.prs { background: rgba(63,185,80,0.15); border-color: var(--green); color: var(--green); }
+        .badge.license { background: rgba(139,148,158,0.15); border-color: var(--text-muted); color: var(--text-muted); }
+        /* Stat Cards */
+        .stat-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem; margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+            padding: 1.25rem; text-align: center;
+        }
+        .stat-card .value { font-size: 2rem; font-weight: 700; line-height: 1.2; }
+        .stat-card .label { color: var(--text-muted); font-size: 0.85rem; margin-top: 0.25rem; }
+        .stat-card.stars .value { color: var(--accent); }
+        .stat-card.forks .value { color: var(--purple); }
+        .stat-card.issues .value { color: var(--orange); }
+        .stat-card.prs .value { color: var(--green); }
+        .stat-card.commits .value { color: var(--text); }
+        .stat-card.watchers .value { color: var(--text); }
+        /* Charts */
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        @media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
+        .chart-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem;
+        }
+        .chart-card h3 { margin-bottom: 1rem; font-weight: 500; font-size: 1rem; color: var(--text-muted); }
+        .chart-card canvas { max-height: 250px; }
+        /* Sections */
+        section { margin-bottom: 2rem; }
+        section h2 {
+            font-size: 1.25rem; font-weight: 600; margin-bottom: 1rem;
+            padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+        }
+        /* Tables */
+        .item-table {
+            width: 100%; border-collapse: collapse;
+        }
+        .item-table th, .item-table td {
+            text-align: left; padding: 0.6rem 0.75rem;
+            border-bottom: 1px solid var(--border); font-size: 0.9rem;
+        }
+        .item-table th { color: var(--text-muted); font-weight: 500; }
+        .item-table tr:hover { background: rgba(255,255,255,0.02); }
+        .item-table a { color: var(--accent); text-decoration: none; }
+        .item-table a:hover { text-decoration: underline; }
+        .label-tag {
+            display: inline-block; padding: 0.1rem 0.5rem; border-radius: 2rem;
+            font-size: 0.7rem; font-weight: 500; margin: 0.1rem;
+            background: rgba(88,166,255,0.15); color: var(--accent);
+        }
+        .sha { font-family: "SFMono-Regular", Consolas, monospace; font-size: 0.8rem; color: var(--text-muted); }
+        .draft-badge {
+            display: inline-block; padding: 0.1rem 0.4rem; border-radius: 2rem;
+            font-size: 0.7rem; background: rgba(139,148,158,0.2); color: var(--text-muted);
+        }
+        .footer {
+            text-align: center; color: var(--text-muted); font-size: 0.8rem;
+            padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 2rem;
+        }
+        .topic-tag {
+            display: inline-block; padding: 0.15rem 0.6rem; border-radius: 2rem;
+            font-size: 0.75rem; border: 1px solid var(--border); margin: 0.15rem;
+        }
+        .empty-state { color: var(--text-muted); font-style: italic; padding: 1rem 0; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1><a href="{{ stats.html_url }}" target="_blank">{{ stats.full_name }}</a></h1>
+        <p class="subtitle">{{ stats.description }}</p>
+        <div class="meta-badges">
+            <span class="badge lang">{% if stats.language %}{{ stats.language }}{% else %}N/A{% endif %}</span>
+            <span class="badge stars">★ {{ stats.star_count }} stars</span>
+            <span class="badge forks">⑂ {{ stats.fork_count }} forks</span>
+            <span class="badge issues">◉ {{ stats.open_issue_count }} issues</span>
+            <span class="badge prs">▣ {{ stats.open_pr_count }} PRs</span>
+            {% if stats.license and stats.license != "N/A" %}
+            <span class="badge license">📄 {{ stats.license }}</span>
+            {% endif %}
+        </div>
+        <div style="margin-top: 0.5rem;">
+            {% for topic in stats.topics[:10] %}
+            <span class="topic-tag">{{ topic }}</span>
+            {% endfor %}
+        </div>
+    </header>
+
+    <!-- Stat cards -->
+    <div class="stat-grid">
+        <div class="stat-card stars"><div class="value">{{ stats.star_count }}</div><div class="label">★ Stars</div></div>
+        <div class="stat-card forks"><div class="value">{{ stats.fork_count }}</div><div class="label">⑂ Forks</div></div>
+        <div class="stat-card watchers"><div class="value">{{ stats.watchers }}</div><div class="label">👁 Watchers</div></div>
+        <div class="stat-card issues"><div class="value">{{ stats.open_issue_count }}</div><div class="label">◉ Open Issues</div></div>
+        <div class="stat-card prs"><div class="value">{{ stats.open_pr_count }}</div><div class="label">▣ Open PRs</div></div>
+        <div class="stat-card commits"><div class="value">{{ stats.commit_count }}</div><div class="label">⚡ Commits ({{ stats.default_branch }})</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="chart-grid">
+        <div class="chart-card">
+            <h3>★ Stars ({{ stats.star_count }} total)</h3>
+            <canvas id="starsChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>◉ Issues Opened</h3>
+            <canvas id="issuesChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>▣ Pull Requests Opened</h3>
+            <canvas id="prsChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3>⚡ Commits</h3>
+            <canvas id="commitsChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Recent Commits -->
+    <section>
+        <h2>⚡ Recent Commits</h2>
+        {% if stats.commits %}
+        <table class="item-table">
+            <thead><tr><th>SHA</th><th>Message</th><th>Author</th><th>Date</th></tr></thead>
+            <tbody>
+            {% for c in stats.commits %}
+            <tr>
+                <td><a href="{{ c.html_url }}" class="sha">{{ c.sha }}</a></td>
+                <td><a href="{{ c.html_url }}">{{ c.message }}</a></td>
+                <td>{{ c.author }}</td>
+                <td>{{ c.date[:10] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No recent commits found.</div>
+        {% endif %}
+    </section>
+
+    <!-- Open Issues -->
+    <section>
+        <h2>◉ Open Issues ({{ stats.open_issue_count }})</h2>
+        {% if stats.issues %}
+        <table class="item-table">
+            <thead><tr><th>#</th><th>Title</th><th>Labels</th><th>Comments</th><th>Created</th></tr></thead>
+            <tbody>
+            {% for issue in stats.issues %}
+            <tr>
+                <td><a href="{{ issue.html_url }}">#{{ issue.number }}</a></td>
+                <td><a href="{{ issue.html_url }}">{{ issue.title }}</a></td>
+                <td>
+                    {% for label in issue.labels[:5] %}
+                    <span class="label-tag">{{ label }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ issue.comments }}</td>
+                <td>{{ issue.created[:10] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No open issues — ship it! 🚀</div>
+        {% endif %}
+    </section>
+
+    <!-- Open Pull Requests -->
+    <section>
+        <h2>▣ Open Pull Requests ({{ stats.open_pr_count }})</h2>
+        {% if stats.prs %}
+        <table class="item-table">
+            <thead><tr><th>#</th><th>Title</th><th>Labels</th><th>Comments</th><th>Created</th></tr></thead>
+            <tbody>
+            {% for pr in stats.prs %}
+            <tr>
+                <td><a href="{{ pr.html_url }}">#{{ pr.number }}</a></td>
+                <td>
+                    <a href="{{ pr.html_url }}">{{ pr.title }}</a>
+                    {% if pr.draft %}<span class="draft-badge">Draft</span>{% endif %}
+                </td>
+                <td>
+                    {% for label in pr.labels[:5] %}
+                    <span class="label-tag">{{ label }}</span>
+                    {% endfor %}
+                </td>
+                <td>{{ pr.comments + pr.review_comments }}</td>
+                <td>{{ pr.created[:10] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">No open pull requests.</div>
+        {% endif %}
+    </section>
+
+    <div class="footer">
+        Generated by <strong>repo-stats-dashboard</strong> action &mdash; {{ stats.generated_at[:19] }} UTC
+    </div>
+</div>
+
+<script>
+(function() {
+    const labels = {{ stats.chart_labels | safe }};
+    const makeChart = (id, label, data, color, bgColor) => {
+        const ctx = document.getElementById(id);
+        if (!ctx) return;
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: label,
+                    data: data,
+                    borderColor: color,
+                    backgroundColor: bgColor || color + '33',
+                    borderWidth: 2,
+                    pointRadius: 2,
+                    pointHoverRadius: 5,
+                    fill: true,
+                    tension: 0.2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    x: {
+                        ticks: { color: '#8b949e', maxTicksLimit: 10 },
+                        grid: { color: '#30363d' }
+                    },
+                    y: {
+                        ticks: { color: '#8b949e', precision: 0 },
+                        grid: { color: '#30363d' },
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    };
+    makeChart('starsChart', 'Stars', {{ stats.chart_stars | safe }}, '#58a6ff');
+    makeChart('issuesChart', 'Issues', {{ stats.chart_issues | safe }}, '#d29922');
+    makeChart('prsChart', 'PRs', {{ stats.chart_prs | safe }}, '#3fb950');
+    makeChart('commitsChart', 'Commits', {{ stats.chart_commits | safe }}, '#e6edf3', '#e6edf311');
+})();
+</script>
+</body>
+</html>
