@@ -125,7 +125,7 @@ repo-stats-dashboard/
 
 If you find this project useful, consider supporting my work:
 
-- 💖 **Sponsor via WeChat/Alipay**: Email `530765059@qq.com` for details
+- 💖 **赞助支持 (Sponsor)**: 支付宝 `18559219554`
 - ☁️ **Get $200 free credit** on [DigitalOcean](https://www.digitalocean.com/?refcode=scl339-01&utm_campaign=Referral_Invite&utm_medium=opensource&utm_source=SCL339)
 - 🚀 **Deploy your frontend** on [Vercel](https://vercel.com/?utm_source=scl339&utm_campaign=oss)
 - ⭐ **Star this repo** to help others discover it
