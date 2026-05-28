@@ -2,7 +2,14 @@
 
 A **Docker-based GitHub Action** that generates a pretty HTML dashboard of your repository's stats — stars, issues, pull requests, and commits — then uploads it as a GitHub Pages artifact.
 
-![Stars](https://img.shields.io/badge/stats-dashboard-blue?logo=github-actions&logoColor=white)
+## Badges
+
+[![GitHub release](https://img.shields.io/github/v/release/SCL339/repo-stats-dashboard?logo=github&logoColor=white)](https://github.com/SCL339/repo-stats-dashboard/releases)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-repo--stats--dashboard-blue?logo=github-actions&logoColor=white)](https://github.com/marketplace/actions/repo-stats-dashboard)
+[![License](https://img.shields.io/github/license/SCL339/repo-stats-dashboard)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/SCL339/repo-stats-dashboard?style=social)](https://github.com/SCL339/repo-stats-dashboard)
+[![GitHub issues](https://img.shields.io/github/issues/SCL339/repo-stats-dashboard?logo=github)](https://github.com/SCL339/repo-stats-dashboard/issues)
+[![Docker](https://img.shields.io/badge/Docker-based-blue?logo=docker&logoColor=white)](https://github.com/SCL339/repo-stats-dashboard/blob/main/Dockerfile)
 
 ## Features
 

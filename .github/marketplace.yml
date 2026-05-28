@@ -1,0 +1,10 @@
+name: 'repo-stats-dashboard'
+description: 'Generate a beautiful HTML dashboard of your repo stats (stars, issues, PRs, commits) and upload as a GitHub Pages artifact'
+author: 'SCL339'
+icon: 'bar-chart-2'
+color: 'green'
+categories:
+  - analytics
+  - monitoring
+  - utilities
+  - pages
