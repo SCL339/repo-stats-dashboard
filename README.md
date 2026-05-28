@@ -120,3 +120,12 @@ repo-stats-dashboard/
 ## License
 
 MIT
+
+## GitHub Marketplace
+
+This action is listed on the [GitHub Marketplace](https://github.com/marketplace/actions/repo-stats-dashboard).  
+Follow the steps below to publish a new version:
+
+1. Update the version tag (e.g., `v1.0.0`) and push
+2. Create a GitHub Release — the Marketplace syncs automatically
+3. Ensure `.github/marketplace.yml` and `branding` in `action.yml` are correct
