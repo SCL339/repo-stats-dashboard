@@ -119,7 +119,7 @@ ARKERace syncs automatically
 如果这个项目对你有帮助，可以请我喝杯咖啡 ☕
 
 - 💖 **支付宝 (Alipay)**: `18559219554` | 邮箱联系: `530765059@qq.com`
-- ☁️ **DigitalOcean 联盟链接**: [免费 $200 额度](https://www.digitalocean.com/?refcode=scl339-01&utm_campaign=Referral_Invite&utm_medium=opensource&utm_source=SCL339)
+- ☁️ **DigitalOcean 联盟链接**: [免费 $200 额度](https://m.do.co/c/2ca0db2b48be)
 - ⭐ **在 GitHub 上点 Star** 帮助更多人发现这个项目
 
 ## 📄 License
